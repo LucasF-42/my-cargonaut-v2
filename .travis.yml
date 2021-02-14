@@ -1,2 +1,12 @@
 language: java
 jdk: openjdk15
+
+deploy:
+  - provider: heroku:git
+    api-key: $HEROKU_API_KEY
+    edge: true
+    #:
+    app: kms-mycargonaut
+    on:
+      repo:  LucasF-42/my-cargonaut-v2 
+      branch: master
