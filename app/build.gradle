@@ -38,10 +38,17 @@ application {
     mainClass = 'my_cargonaut.App'
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(15))
+    }
+}
+
 task stage(dependsOn: ['build', 'clean'])
 build.mustRunAfter clean
 
 task copyToLib(type: Copy) {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
     into "$buildDir/libs"
     from(configurations.compile)
 }
