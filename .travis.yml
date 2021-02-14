@@ -9,4 +9,4 @@ deploy:
     app: kms-mycargonaut
     on:
       repo:  LucasF-42/my-cargonaut-v2 
-      branch: master
+      branch: travisHerokuTest
