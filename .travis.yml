@@ -2,8 +2,8 @@ language: java
 jdk: openjdk15
 
 deploy:
-  - provider: heroku:git
-    api-key: $HEROKU_API_KEY
+  - provider: heroku
+    api_key: $HEROKU_API_KEY
     edge: true
     #:
     app: kms-mycargonaut
