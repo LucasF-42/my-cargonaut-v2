@@ -83,7 +83,7 @@ public class App {
 
             app.error(404, LandingController.serveNotFoundPage);
         });
-        app.start(7777);
+        app.start(getHerokuAssignedPort());
     }
 
     private static void configure(JavalinConfig config) {
@@ -99,5 +99,14 @@ public class App {
         } else {
             return TemplateEngine.createPrecompiled(Path.of("jte-classes"), ContentType.Html);
         }
+    }
+
+    // based on tutorial found at: https://javalin.io/tutorials/heroku
+    private static int getHerokuAssignedPort() {
+        String herokuPort = System.getenv("PORT");
+        if (herokuPort != null) {
+            return Integer.parseInt(herokuPort);
+        }
+        return 7777;
     }
 }
