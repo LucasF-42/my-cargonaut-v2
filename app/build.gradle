@@ -21,16 +21,16 @@ dependencies {
     testImplementation 'junit:junit:4.13'
 
     // This dependency is used by the application.
-    implementation 'com.google.guava:guava:29.0-jre'
+    compile 'com.google.guava:guava:29.0-jre'
 
     // Javalin
-    implementation 'io.javalin:javalin:3.12.0'
+    compile 'io.javalin:javalin:3.12.0'
 
     //jte
-    implementation group: 'gg.jte', name: 'jte', version: '1.5.0'
+    compile 'gg.jte:jte:1.5.0'
 
     // Java Logger
-    implementation "org.slf4j:slf4j-simple:1.7.30"
+    compile "org.slf4j:slf4j-simple:1.7.30"
 }
 
 application {
@@ -51,6 +51,16 @@ task copyToLib(type: Copy) {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     into "$buildDir/libs"
     from(configurations.compile)
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'my_cargonaut.App'
+    }
+    baseName = 'MyCargonaut'
+    from {
+        configurations.compile.collect {it.isDirectory() ? it: zipTree(it)}
+    }
 }
 
 stage.dependsOn(copyToLib)
