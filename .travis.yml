@@ -1,2 +1,12 @@
 language: java
 jdk: openjdk15
+
+addons:
+  sonarcloud:
+    organization: "kms-team6"
+    token: $SONARCLOUD_TOKEN
+
+script:
+  - ./gradlew sonarqube
+
+
