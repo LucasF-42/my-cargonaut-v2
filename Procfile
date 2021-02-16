@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -jar app/build/libs/*.jar
+web: java $JAVA_OPTS -jar target/MyCargonaut-1.0.0-SNAPSHOT-jar-with-dependencies.jar
