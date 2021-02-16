@@ -4,7 +4,8 @@ jdk: openjdk15
 addons:
   sonarcloud:
     organization: "kms-team6"
-    token: $SONARCLOUD_TOKEN
+    token: 
+      secure: $SONAR_TOKEN
 
 script:
   - ./gradlew sonarqube
