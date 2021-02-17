@@ -137,7 +137,7 @@ public class OfferPoolTest {
 
         @Test
         @DisplayName("getHeight() returns non-empty Optional if field is null")
-        void getHeightReturnsValueifNotNull() {
+        void getHeightReturnsValueIfNotNull() {
             testOfferFilter.setMeasurementsMap(mockMap);
             when(mockMap.get("height")).thenReturn(hei);
             Assertions.assertFalse(testOfferFilter.getHeight().isEmpty());
@@ -153,7 +153,7 @@ public class OfferPoolTest {
 
         @Test
         @DisplayName("getWidth() returns non-empty Optional if field is null")
-        void getWidthReturnsValueifNotNull() {
+        void getWidthReturnsValueIfNotNull() {
             testOfferFilter.setMeasurementsMap(mockMap);
             when(mockMap.get("width")).thenReturn(wid);
             Assertions.assertFalse(testOfferFilter.getWidth().isEmpty());
@@ -169,7 +169,7 @@ public class OfferPoolTest {
 
         @Test
         @DisplayName("getDepth() returns non-empty Optional if field is null")
-        void getDepthReturnsValueifNotNull() {
+        void getDepthReturnsValueIfNotNull() {
             testOfferFilter.setMeasurementsMap(mockMap);
             when(mockMap.get("depth")).thenReturn(dep);
             Assertions.assertFalse(testOfferFilter.getDepth().isEmpty());
@@ -185,7 +185,7 @@ public class OfferPoolTest {
 
         @Test
         @DisplayName("getWeight() returns non-empty Optional if field is null")
-        void getWeightReturnsValueifNotNull() {
+        void getWeightReturnsValueIfNotNull() {
             testOfferFilter.setMeasurementsMap(mockMap);
             when(mockMap.get("weight")).thenReturn(wei);
             Assertions.assertFalse(testOfferFilter.getWeight().isEmpty());
@@ -199,7 +199,7 @@ public class OfferPoolTest {
         }
 
         @Test
-        @DisplayName("filtering with a specific User only returns offers by that user")
+        @DisplayName("filtering by a specific User only returns offers by that user")
         void applyFilterWithUser() {
             List<Offer> filteredList;
             User u = offerList.get(0).getUser();
@@ -207,6 +207,194 @@ public class OfferPoolTest {
             filteredList = testOfferFilter.applyFilter();
             for(Offer offer : filteredList) {
                 Assertions.assertEquals(u, offer.getUser());
+            }
+        }
+
+        @Test
+        @DisplayName("filtering by starting location does exclude offers")
+        void applyFilterByStartLocationExclusionTest() {
+            List<Offer> filteredList;
+            Location loc = new Location(80.0, 80.0, "notHere", "noMansLand");
+            testOfferFilter.setStartLoc(loc);
+            filteredList = testOfferFilter.applyFilter();
+
+            Assertions.assertEquals(0, filteredList.size());
+        }
+
+        @Test
+        @DisplayName("filtering by starting location only returns offers starting from this location")
+        void applyFilterByStartLocationFilterTest() {
+            List<Offer> filteredList;
+            Location loc = offerList.get(0).getRoute().getStartLoc();
+            testOfferFilter.setStartLoc(loc);
+            filteredList = testOfferFilter.applyFilter();
+
+            for(Offer offer : filteredList) {
+                Assertions.assertEquals(loc, offer.getRoute().getStartLoc());
+            }
+        }
+
+        @Test
+        @DisplayName("filtering by destination does exclude offers")
+        void applyFilterByDestinationExclusionTest() {
+            List<Offer> filteredList;
+            Location loc = new Location(80.0, 80.0, "notHere", "noMansLand");
+            testOfferFilter.setDestLoc(loc);
+            filteredList = testOfferFilter.applyFilter();
+
+            Assertions.assertEquals(0, filteredList.size());
+        }
+
+        @Test
+        @DisplayName("filtering by destination only returns offers starting from this location")
+        void applyFilterByDestinationFilterTest() {
+            List<Offer> filteredList;
+            Location loc = offerList.get(0).getRoute().getEndLoc();
+            testOfferFilter.setDestLoc(loc);
+            filteredList = testOfferFilter.applyFilter();
+
+            for(Offer offer : filteredList) {
+                Assertions.assertEquals(loc, offer.getRoute().getEndLoc());
+            }
+        }
+
+        @Test
+        @DisplayName("filtering by start date does exclude offers")
+        void applyFilterByStartDateExclusionTest() throws ParseException {
+            List<Offer> filteredList;
+            Date filterStartDate = FormManUtils.parseDateFromFromParam("2022-12-24T12:00");
+            testOfferFilter.setStartDate(filterStartDate);
+            filteredList = testOfferFilter.applyFilter();
+
+            Assertions.assertEquals(0, filteredList.size());
+        }
+
+        @Test
+        @DisplayName("filtering by start date only returns offers starting afterwards")
+        void applyFilterByStartDateFilterTest() throws ParseException {
+            List<Offer> filteredList;
+            Date filterStartDate = FormManUtils.parseDateFromFromParam("2021-02-25T12:00");
+            testOfferFilter.setStartDate(filterStartDate);
+            filteredList = testOfferFilter.applyFilter();
+
+            for(Offer offer : filteredList) {
+                Assertions.assertTrue(filterStartDate.before(offer.getRoute().getStartTime()));
+            }
+        }
+
+        @Test
+        @DisplayName("filtering by start date only returns offers starting afterwards & before its end date")
+        void applyFilterByStartDateFilterTestWithEndDate() throws ParseException {
+            List<Offer> filteredList;
+            Date filterStartDate = FormManUtils.parseDateFromFromParam("2021-02-25T12:00");
+            Date filterEndDate = FormManUtils.parseDateFromFromParam("2021-03-02T12:00");
+            testOfferFilter.setStartDate(filterStartDate);
+            testOfferFilter.setEndDate(filterEndDate);
+            filteredList = testOfferFilter.applyFilter();
+
+            for(Offer offer : filteredList) {
+                Assertions.assertTrue(filterStartDate.before(offer.getRoute().getStartTime()));
+                Assertions.assertTrue(filterEndDate.after(offer.getRoute().getStartTime()));
+            }
+        }
+
+        @Test
+        void applyFilterByAvailFreeSpaceHeightExclusionTest() {
+            List<Offer> resList;
+            Measurements requiredFreeSpace = new Measurements(2000.0, 0.0, 0.0, 0.0);
+            testOfferFilter.setFreeSpace(requiredFreeSpace);
+            resList = testOfferFilter.applyFilter();
+
+            Assertions.assertEquals(0, resList.size());
+        }
+
+        @Test
+        void applyFilterByAvailFreeSpaceHeightFilterTest() {
+            List<Offer> resList;
+            double value = 80.0;
+            Measurements requiredFreeSpace = new Measurements(value, 0.0, 0.0, 0.0);
+            testOfferFilter.setFreeSpace(requiredFreeSpace);
+            resList = testOfferFilter.applyFilter();
+
+            for(Offer offer : resList) {
+                if(offer.getFreeSpace().isPresent()) {
+                    Assertions.assertTrue(value < offer.getFreeSpace().get().getHeight());
+                }
+            }
+        }
+
+        @Test
+        void applyFilterByAvailFreeSpaceWidthExclusionTest() {
+            List<Offer> resList;
+            Measurements requiredFreeSpace = new Measurements(0.0, 2000.0, 0.0, 0.0);
+            testOfferFilter.setFreeSpace(requiredFreeSpace);
+            resList = testOfferFilter.applyFilter();
+
+            Assertions.assertEquals(0, resList.size());
+        }
+
+        @Test
+        void applyFilterByAvailFreeSpaceWidthFilterTest() {
+            List<Offer> resList;
+            double value = 180.0;
+            Measurements requiredFreeSpace = new Measurements(0.0, value, 0.0, 0.0);
+            testOfferFilter.setFreeSpace(requiredFreeSpace);
+            resList = testOfferFilter.applyFilter();
+
+            for(Offer offer : resList) {
+                if(offer.getFreeSpace().isPresent()) {
+                    Assertions.assertTrue(value < offer.getFreeSpace().get().getWidth());
+                }
+            }
+        }
+
+        @Test
+        void applyFilterByAvailFreeSpaceDepthExclusionTest() {
+            List<Offer> resList;
+            Measurements requiredFreeSpace = new Measurements(0.0, 0.0, 2000.0, 0.0);
+            testOfferFilter.setFreeSpace(requiredFreeSpace);
+            resList = testOfferFilter.applyFilter();
+
+            Assertions.assertEquals(0, resList.size());
+        }
+
+        @Test
+        void applyFilterByAvailFreeSpaceDepthFilterTest() {
+            List<Offer> resList;
+            double value = 280.0;
+            Measurements requiredFreeSpace = new Measurements(0.0, 0.0, value, 0.0);
+            testOfferFilter.setFreeSpace(requiredFreeSpace);
+            resList = testOfferFilter.applyFilter();
+
+            for(Offer offer : resList) {
+                if(offer.getFreeSpace().isPresent()) {
+                    Assertions.assertTrue(value < offer.getFreeSpace().get().getDepth());
+                }
+            }
+        }
+
+        @Test
+        void applyFilterByAvailFreeSpaceWeightExclusionTest() {
+            List<Offer> resList;
+            Measurements requiredFreeSpace = new Measurements(0.0, 0.0, 0.0, 2000.0);
+            testOfferFilter.setFreeSpace(requiredFreeSpace);
+            resList = testOfferFilter.applyFilter();
+
+            Assertions.assertEquals(0, resList.size());
+        }
+
+        @Test
+        void applyFilterByAvailFreeSpaceWeightFilterTest() {
+            List<Offer> resList;
+            double value = 380.0;
+            Measurements requiredFreeSpace = new Measurements(0.0, 0.0, 0.0, value);
+            testOfferFilter.setFreeSpace(requiredFreeSpace);
+            resList = testOfferFilter.applyFilter();
+
+            for(Offer offer : resList) {
+                if(offer.getFreeSpace().isPresent()) {
+                    Assertions.assertTrue(value < offer.getFreeSpace().get().getWeight());
+                }
             }
         }
 
@@ -313,6 +501,8 @@ public class OfferPoolTest {
                 Assertions.assertTrue(requiredSpace <= freeSpace);
             }
         }
+
+
         
     }
 }

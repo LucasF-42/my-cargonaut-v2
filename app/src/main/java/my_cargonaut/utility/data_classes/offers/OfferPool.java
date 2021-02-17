@@ -76,10 +76,12 @@ public class OfferPool implements java.io.Serializable {
                         }
                         if(filter.startD != null) {
                             Date offerStartDate = offer.getRoute().getStartTime();
-                            if(!filter.startD.equals(offer.getRoute().getStartTime())) return false;
-
-                            if(filter.startD.after(offerStartDate)) return false;
-                            if(filter.endD.before(offerStartDate)) return false;
+                            if(!filter.startD.equals(offer.getRoute().getStartTime())) {
+                                if(filter.startD.after(offerStartDate)) return false;
+                            }
+                            if(filter.endD != null) {
+                                if(filter.endD.before(offerStartDate)) return false;
+                            }
                         }
                         if(filter.freeSpace != null) {
                             if(offer.getFreeSpace().isPresent()) {
@@ -89,7 +91,7 @@ public class OfferPool implements java.io.Serializable {
                                 return (!(cargoHold.getHeight() < cargoMeas.getHeight()))
                                         && (!(cargoHold.getWidth() < cargoMeas.getWidth()))
                                         && (!(cargoHold.getDepth() < cargoMeas.getDepth()))
-                                        && (!(cargoHold.getWeight() < cargoMeas.getDepth()));
+                                        && (!(cargoHold.getWeight() < cargoMeas.getWeight()));
                             }
                         } else {
                             if(offer.getFreeSpace().isPresent()) {
