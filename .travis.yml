@@ -17,10 +17,10 @@ cache:
 
 
 install:
-  gradle app:assemble
+  ./gradlew assemble
 
 script:
-  - gradle app:check
+  - ./gradlew check
   - ./gradlew sonarqube
 
 
