@@ -29,56 +29,6 @@ public class OfferPool implements java.io.Serializable {
         return this.offerList.add(offer);
     }
 
-    private List<Offer> filterOffers(OfferFilter filter) {
-        return offerList.stream()
-                .filter(offer -> {
-                    if(filter.user != null) {
-                        if(!filter.user.equals(offer.getUser())) return false;
-                    }
-                    if(filter.startLoc != null) {
-                        if(!filter.startLoc.equals(offer.getRoute().getStartLoc())) return false;
-                    } else {
-                        if(filter.startLocName != null && !filter.startLocName.equals(offer.getRoute().getStartLoc().getLocationName())) {
-                            return false;
-                        }
-                    }
-                    if(filter.destLoc != null) {
-                        if(!filter.destLoc.equals(offer.getRoute().getEndLoc())) return false;
-                    } else {
-                        if(filter.destLocName != null && !filter.destLocName.equals(offer.getRoute().getEndLoc().getLocationName())) {
-                            return false;
-                        }
-                    }
-                    if(filter.startD != null) {
-                        Date offerStartDate = offer.getRoute().getStartTime();
-                        if(!filter.startD.equals(offer.getRoute().getStartTime())) return false;
-
-                        if(filter.startD.after(offerStartDate)) return false;
-                        if(filter.endD.before(offerStartDate)) return false;
-                    }
-                    if(filter.freeSpace != null) {
-                        if(offer.getFreeSpace().isPresent()) {
-                            Measurements cargoMeas = filter.freeSpace;
-                            Measurements cargoHold = offer.getFreeSpace().get();
-
-                            return (!(cargoHold.getHeight() < cargoMeas.getHeight()))
-                                    && (!(cargoHold.getWidth() < cargoMeas.getWidth()))
-                                    && (!(cargoHold.getDepth() < cargoMeas.getDepth()))
-                                    && (!(cargoHold.getWeight() < cargoMeas.getDepth()));
-                        }
-                    } else {
-                        if(offer.getFreeSpace().isPresent()) {
-                            Measurements cargoHold = offer.getFreeSpace().get();
-                            if(filter.getHeight().isPresent() && cargoHold.getHeight() < cargoHold.getHeight()) return false;
-                            if(filter.getWidth().isPresent() && cargoHold.getWidth() < cargoHold.getWidth()) return false;
-                            if(filter.getDepth().isPresent() && cargoHold.getDepth() < cargoHold.getDepth()) return false;
-                            return filter.getWeight().isEmpty() || !(cargoHold.getWeight() < cargoHold.getWeight());
-                        }
-                    }
-                    return true;
-                }).collect(Collectors.toCollection(LinkedList::new));
-    }
-
     public OfferFilter getOfferFilter() {
         return new OfferFilter();
     }
@@ -122,6 +72,56 @@ public class OfferPool implements java.io.Serializable {
 
         public List<Offer> applyFilter() {
             return filterOffers(this);
+        }
+
+        private List<Offer> filterOffers(OfferFilter filter) {
+            return offerList.stream()
+                    .filter(offer -> {
+                        if(filter.user != null) {
+                            if(!filter.user.equals(offer.getUser())) return false;
+                        }
+                        if(filter.startLoc != null) {
+                            if(!filter.startLoc.equals(offer.getRoute().getStartLoc())) return false;
+                        } else {
+                            if(filter.startLocName != null && !filter.startLocName.equals(offer.getRoute().getStartLoc().getLocationName())) {
+                                return false;
+                            }
+                        }
+                        if(filter.destLoc != null) {
+                            if(!filter.destLoc.equals(offer.getRoute().getEndLoc())) return false;
+                        } else {
+                            if(filter.destLocName != null && !filter.destLocName.equals(offer.getRoute().getEndLoc().getLocationName())) {
+                                return false;
+                            }
+                        }
+                        if(filter.startD != null) {
+                            Date offerStartDate = offer.getRoute().getStartTime();
+                            if(!filter.startD.equals(offer.getRoute().getStartTime())) return false;
+
+                            if(filter.startD.after(offerStartDate)) return false;
+                            if(filter.endD.before(offerStartDate)) return false;
+                        }
+                        if(filter.freeSpace != null) {
+                            if(offer.getFreeSpace().isPresent()) {
+                                Measurements cargoMeas = filter.freeSpace;
+                                Measurements cargoHold = offer.getFreeSpace().get();
+
+                                return (!(cargoHold.getHeight() < cargoMeas.getHeight()))
+                                        && (!(cargoHold.getWidth() < cargoMeas.getWidth()))
+                                        && (!(cargoHold.getDepth() < cargoMeas.getDepth()))
+                                        && (!(cargoHold.getWeight() < cargoMeas.getDepth()));
+                            }
+                        } else {
+                            if(offer.getFreeSpace().isPresent()) {
+                                Measurements cargoHold = offer.getFreeSpace().get();
+                                if(filter.getHeight().isPresent() && cargoHold.getHeight() < cargoHold.getHeight()) return false;
+                                if(filter.getWidth().isPresent() && cargoHold.getWidth() < cargoHold.getWidth()) return false;
+                                if(filter.getDepth().isPresent() && cargoHold.getDepth() < cargoHold.getDepth()) return false;
+                                return filter.getWeight().isEmpty() || !(cargoHold.getWeight() < cargoHold.getWeight());
+                            }
+                        }
+                        return true;
+                    }).collect(Collectors.toCollection(LinkedList::new));
         }
     }
 }
