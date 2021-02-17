@@ -9,6 +9,7 @@ import my_cargonaut.utility.data_classes.user.User;
 import org.junit.jupiter.api.*;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.mockito.Mockito.mock;
@@ -58,11 +59,11 @@ public class OfferPoolTest {
         Location l2 = new Location(2.0, 2.0, "loc2", "country1");
         Location l3 = new Location(50.0, 51.0, "loc3", "country3");
 
-        Date d1 = FormManUtils.parseDateFromFromParam("2021-3-1T12:00");
+        Date d1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse("2021-3-1T12:00");
                 //new Date(2021, Calendar.MARCH, 1);
-        Date d2 = FormManUtils.parseDateFromFromParam("2021-3-10T12:00");
+        Date d2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse("2021-3-10T12:00");
                 //new Date(2021, Calendar.MARCH, 10);
-        Date d3 = FormManUtils.parseDateFromFromParam("2021-2-10T12:00");
+        Date d3 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse("2021-2-10T12:00");
                 //new Date(2021, Calendar.FEBRUARY, 10);
 
         Measurements m1 = new Measurements(10.0, 20.0, 30.0, 40.0);
@@ -273,7 +274,7 @@ public class OfferPoolTest {
         @DisplayName("filtering by start date only returns offers starting afterwards")
         void applyFilterByStartDateFilterTest() throws ParseException {
             List<Offer> filteredList;
-            Date filterStartDate = FormManUtils.parseDateFromFromParam("2021-02-25T12:00");
+            Date filterStartDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse("2021-02-25T12:00");
             testOfferFilter.setStartDate(filterStartDate);
             filteredList = testOfferFilter.applyFilter();
 
@@ -286,8 +287,8 @@ public class OfferPoolTest {
         @DisplayName("filtering by start date only returns offers starting afterwards & before its end date")
         void applyFilterByStartDateFilterTestWithEndDate() throws ParseException {
             List<Offer> filteredList;
-            Date filterStartDate = FormManUtils.parseDateFromFromParam("2021-02-25T12:00");
-            Date filterEndDate = FormManUtils.parseDateFromFromParam("2021-03-02T12:00");
+            Date filterStartDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse("2021-02-25T12:00");
+            Date filterEndDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse("2021-03-02T12:00");
             testOfferFilter.setStartDate(filterStartDate);
             testOfferFilter.setEndDate(filterEndDate);
             filteredList = testOfferFilter.applyFilter();
