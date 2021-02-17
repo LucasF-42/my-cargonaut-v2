@@ -29,7 +29,7 @@ public class OfferPool implements java.io.Serializable {
         return this.offerList.add(offer);
     }
 
-    public List<Offer> filterOffers(OfferFilter filter) {
+    private List<Offer> filterOffers(OfferFilter filter) {
         return offerList.stream()
                 .filter(offer -> {
                     if(filter.user != null) {

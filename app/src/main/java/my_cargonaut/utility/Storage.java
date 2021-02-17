@@ -30,7 +30,7 @@ public class Storage {
         UserRegister tmpUserRegister = (UserRegister) readFile(userRegisterLoc);
         OfferPool tmpOfferPool = (OfferPool) readFile(offerPoolLoc);
 
-        tmpOfferPool.filterOffers(tmpOfferPool.getOfferFilter()).forEach(offer -> {
+        tmpOfferPool.getOfferFilter().applyFilter().forEach(offer -> {
             userRegister.addNewUser(offer.getUser());
             offerPool.addOffer(offer);
         });
@@ -39,20 +39,20 @@ public class Storage {
     }
 
     private static void writeFile(String filename, Object obj) throws IOException {
-        FileOutputStream fileOut = new FileOutputStream(filename);
-        ObjectOutputStream out = new ObjectOutputStream(fileOut);
-        out.writeObject(obj);
-        out.close();
-        fileOut.close();
+        try(FileOutputStream fileOut = new FileOutputStream(filename);
+                ObjectOutputStream out = new ObjectOutputStream(fileOut)
+        ) {
+            out.writeObject(obj);
+        }
     }
 
     private static Object readFile(String filename) throws IOException, ClassNotFoundException {
         Object o;
-        FileInputStream fileIn = new FileInputStream(filename);
-        ObjectInputStream in = new ObjectInputStream(fileIn);
-        o = in.readObject();
-        in.close();
-        fileIn.close();
-        return o;
+        try(FileInputStream fileIn = new FileInputStream(filename);
+            ObjectInputStream in = new ObjectInputStream(fileIn)
+        ) {
+            o = in.readObject();
+            return o;
+        }
     }
 }

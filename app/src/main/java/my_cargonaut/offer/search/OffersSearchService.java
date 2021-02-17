@@ -35,7 +35,7 @@ public class OffersSearchService {
     }
 
     private List<Offer> queryOffers(OfferPool.OfferFilter filter) {
-        return offerPool.filterOffers(filter);
+        return filter.applyFilter();
     }
 
     public Optional<Date> getMaybeDateFromString(String dateString) throws ParseException {
