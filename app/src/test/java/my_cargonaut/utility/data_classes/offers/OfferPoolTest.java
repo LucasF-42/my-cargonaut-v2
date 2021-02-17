@@ -1,5 +1,6 @@
 package my_cargonaut.utility.data_classes.offers;
 
+import my_cargonaut.utility.FormManUtils;
 import my_cargonaut.utility.data_classes.Location;
 import my_cargonaut.utility.data_classes.Measurements;
 import my_cargonaut.utility.data_classes.Tour;
@@ -7,6 +8,7 @@ import my_cargonaut.utility.data_classes.Vehicle;
 import my_cargonaut.utility.data_classes.user.User;
 import org.junit.jupiter.api.*;
 
+import java.text.ParseException;
 import java.util.*;
 
 import static org.mockito.Mockito.mock;
@@ -17,17 +19,19 @@ import static org.mockito.Mockito.when;
 public class OfferPoolTest {
 
     private OfferPool testOfferPool;
+    private List<Offer> offerList;
 
     @BeforeAll
-    public void fillOfferList() {
+    public void fillOfferList() throws ParseException {
         testOfferPool = OfferPool.getInstance();
-        createOfferList().forEach(offer -> testOfferPool.addOffer(offer));
+        offerList = createOfferList();
+        offerList.forEach(offer -> testOfferPool.addOffer(offer));
     }
 
     @Test
     @DisplayName("getInstance() returns an OfferPool object")
     void getInstanceReturnsOfferPool() {
-        Assertions.assertTrue(OfferPool.getInstance() instanceof OfferPool);
+        Assertions.assertNotNull(OfferPool.getInstance());
     }
 
     @Test
@@ -45,7 +49,7 @@ public class OfferPoolTest {
         Assertions.assertNotSame(test, offerPool.getOfferFilter());
     }
 
-    private static List<Offer> createOfferList() {
+    private static List<Offer> createOfferList() throws ParseException {
         User u1 = new User("user1", "user1");
         User u2 = new User("user2", "user2");
         User u3 = new User("user3", "user3");
@@ -54,9 +58,12 @@ public class OfferPoolTest {
         Location l2 = new Location(2.0, 2.0, "loc2", "country1");
         Location l3 = new Location(50.0, 51.0, "loc3", "country3");
 
-        Date d1 = new Date(2021, Calendar.MARCH, 1);
-        Date d2 = new Date(2021, Calendar.MARCH, 10);
-        Date d3 = new Date(2021, Calendar.FEBRUARY, 10);
+        Date d1 = FormManUtils.parseDateFromFromParam("2021-3-1T12:00");
+                //new Date(2021, Calendar.MARCH, 1);
+        Date d2 = FormManUtils.parseDateFromFromParam("2021-3-10T12:00");
+                //new Date(2021, Calendar.MARCH, 10);
+        Date d3 = FormManUtils.parseDateFromFromParam("2021-2-10T12:00");
+                //new Date(2021, Calendar.FEBRUARY, 10);
 
         Measurements m1 = new Measurements(10.0, 20.0, 30.0, 40.0);
         Measurements m2 = new Measurements(100.0, 200.0, 300.0, 400.0);
@@ -85,105 +92,227 @@ public class OfferPoolTest {
         Double wid = 20.0;
         Double dep = 30.0;
         Double wei = 40.0;
-        OfferPool.OfferFilter mockFilter = mock(OfferPool.OfferFilter.class);
-        OfferPool.OfferFilter nonMockitoOfferFilter = testOfferPool.getOfferFilter();
+        OfferPool.OfferFilter testOfferFilter = testOfferPool.getOfferFilter();
         Map<String, Double> nonMockitoMockMap;
-        Map mockMap = mock(Map.class);
+        Map<String, Double> mockMap = mock(Map.class);
 
         @BeforeAll
         void initMockMap() {
             nonMockitoMockMap = new HashMap<>();
+        }
+
+        @BeforeEach
+        void reMockFilter() {
+            testOfferFilter = testOfferPool.getOfferFilter();
             nonMockitoMockMap.put("height", hei);
             nonMockitoMockMap.put("width", wid);
             nonMockitoMockMap.put("depth", dep);
             nonMockitoMockMap.put("weight", wei);
         }
 
-        @BeforeEach
-        void reMockFilter() {
-            mockFilter = mock(OfferPool.OfferFilter.class);
-        }
-
         @Test
         @DisplayName("setMeasurementsMap() sets the measurements")
         void setMeasurementsMapSetsMeasurements() {
-            nonMockitoOfferFilter.setMeasurementsMap(nonMockitoMockMap);
-            Assertions.assertTrue(nonMockitoOfferFilter.getHeight().isPresent());
-            Assertions.assertEquals(hei, nonMockitoOfferFilter.getHeight().get());
+            testOfferFilter.setMeasurementsMap(nonMockitoMockMap);
+            Assertions.assertTrue(testOfferFilter.getHeight().isPresent());
+            Assertions.assertEquals(hei, testOfferFilter.getHeight().get());
 
-            Assertions.assertTrue(nonMockitoOfferFilter.getWidth().isPresent());
-            Assertions.assertEquals(wid, nonMockitoOfferFilter.getWidth().get());
+            Assertions.assertTrue(testOfferFilter.getWidth().isPresent());
+            Assertions.assertEquals(wid, testOfferFilter.getWidth().get());
 
-            Assertions.assertTrue(nonMockitoOfferFilter.getDepth().isPresent());
-            Assertions.assertEquals(dep, nonMockitoOfferFilter.getDepth().get());
+            Assertions.assertTrue(testOfferFilter.getDepth().isPresent());
+            Assertions.assertEquals(dep, testOfferFilter.getDepth().get());
 
-            Assertions.assertTrue(nonMockitoOfferFilter.getWeight().isPresent());
-            Assertions.assertEquals(wei, nonMockitoOfferFilter.getWeight().get());
+            Assertions.assertTrue(testOfferFilter.getWeight().isPresent());
+            Assertions.assertEquals(wei, testOfferFilter.getWeight().get());
         }
 
         @Test
         @DisplayName("getHeight() returns empty Optional if field is null")
         void getHeightReturnsEmptyIfNull() {
-            nonMockitoOfferFilter.setMeasurementsMap(mockMap);
+            testOfferFilter.setMeasurementsMap(mockMap);
             when(mockMap.get("height")).thenReturn(null);
-            Assertions.assertTrue(nonMockitoOfferFilter.getHeight().isEmpty());
+            Assertions.assertTrue(testOfferFilter.getHeight().isEmpty());
         }
 
         @Test
         @DisplayName("getHeight() returns non-empty Optional if field is null")
         void getHeightReturnsValueifNotNull() {
-            nonMockitoOfferFilter.setMeasurementsMap(mockMap);
+            testOfferFilter.setMeasurementsMap(mockMap);
             when(mockMap.get("height")).thenReturn(hei);
-            Assertions.assertFalse(nonMockitoOfferFilter.getHeight().isEmpty());
+            Assertions.assertFalse(testOfferFilter.getHeight().isEmpty());
         }
 
         @Test
         @DisplayName("getWidth() returns empty Optional if field is null")
         void getWidthReturnsEmptyIfNull() {
-            nonMockitoOfferFilter.setMeasurementsMap(mockMap);
+            testOfferFilter.setMeasurementsMap(mockMap);
             when(mockMap.get("width")).thenReturn(null);
-            Assertions.assertTrue(nonMockitoOfferFilter.getWidth().isEmpty());
+            Assertions.assertTrue(testOfferFilter.getWidth().isEmpty());
         }
 
         @Test
         @DisplayName("getWidth() returns non-empty Optional if field is null")
         void getWidthReturnsValueifNotNull() {
-            nonMockitoOfferFilter.setMeasurementsMap(mockMap);
+            testOfferFilter.setMeasurementsMap(mockMap);
             when(mockMap.get("width")).thenReturn(wid);
-            Assertions.assertFalse(nonMockitoOfferFilter.getWidth().isEmpty());
+            Assertions.assertFalse(testOfferFilter.getWidth().isEmpty());
         }
 
         @Test
         @DisplayName("getDepth() returns empty Optional if field is null")
         void getDepthReturnsEmptyIfNull() {
-            nonMockitoOfferFilter.setMeasurementsMap(mockMap);
+            testOfferFilter.setMeasurementsMap(mockMap);
             when(mockMap.get("depth")).thenReturn(null);
-            Assertions.assertTrue(nonMockitoOfferFilter.getDepth().isEmpty());
+            Assertions.assertTrue(testOfferFilter.getDepth().isEmpty());
         }
 
         @Test
         @DisplayName("getDepth() returns non-empty Optional if field is null")
         void getDepthReturnsValueifNotNull() {
-            nonMockitoOfferFilter.setMeasurementsMap(mockMap);
+            testOfferFilter.setMeasurementsMap(mockMap);
             when(mockMap.get("depth")).thenReturn(dep);
-            Assertions.assertFalse(nonMockitoOfferFilter.getDepth().isEmpty());
+            Assertions.assertFalse(testOfferFilter.getDepth().isEmpty());
         }
 
         @Test
         @DisplayName("getWeight() returns empty Optional if field is null")
         void getWeightReturnsEmptyIfNull() {
-            nonMockitoOfferFilter.setMeasurementsMap(mockMap);
+            testOfferFilter.setMeasurementsMap(mockMap);
             when(mockMap.get("weight")).thenReturn(null);
-            Assertions.assertTrue(nonMockitoOfferFilter.getWeight().isEmpty());
+            Assertions.assertTrue(testOfferFilter.getWeight().isEmpty());
         }
 
         @Test
         @DisplayName("getWeight() returns non-empty Optional if field is null")
         void getWeightReturnsValueifNotNull() {
-            nonMockitoOfferFilter.setMeasurementsMap(mockMap);
+            testOfferFilter.setMeasurementsMap(mockMap);
             when(mockMap.get("weight")).thenReturn(wei);
-            Assertions.assertFalse(nonMockitoOfferFilter.getWeight().isEmpty());
+            Assertions.assertFalse(testOfferFilter.getWeight().isEmpty());
         }
 
+        @Test
+        @DisplayName("filtering offers without input does return the whole list")
+        void applyFilterWithoutFilterArgumentsReturnsWholeList() {
+            List<Offer> filteredList = testOfferFilter.applyFilter();
+            Assertions.assertEquals(offerList, filteredList);
+        }
+
+        @Test
+        @DisplayName("filtering with a specific User only returns offers by that user")
+        void applyFilterWithUser() {
+            List<Offer> filteredList;
+            User u = offerList.get(0).getUser();
+            testOfferFilter.setUser(u);
+            filteredList = testOfferFilter.applyFilter();
+            for(Offer offer : filteredList) {
+                Assertions.assertEquals(u, offer.getUser());
+            }
+        }
+
+        @Test
+        @DisplayName("filter for checking whether a given cargos height fits in vehicle excludes entries")
+        void applyFilterWithCargoHeightExclusionTest() {
+            List<Offer> resList;
+            testOfferFilter.setMeasurementsMap(nonMockitoMockMap);
+            nonMockitoMockMap.replace("height", 20000.0);
+            resList = testOfferFilter.applyFilter();
+            Assertions.assertEquals(0, resList.size());
+        }
+
+        @Test
+        @DisplayName("filter for checking whether a given cargos height fits in vehicle filters correctly")
+        void applyFilterWithCargoHeightTest() {
+            double requiredSpace = 80.0;
+            double freeSpace;
+            List<Offer> resList;
+            testOfferFilter.setMeasurementsMap(nonMockitoMockMap);
+            nonMockitoMockMap.replace("height", requiredSpace);
+            resList = testOfferFilter.applyFilter();
+
+            for(Offer offer : resList) {
+                freeSpace = offer.getFreeSpace().orElseThrow(IllegalStateException::new).getHeight();
+                Assertions.assertTrue(requiredSpace <= freeSpace);
+            }
+        }
+
+        @Test
+        @DisplayName("filter for checking whether a given cargos width fits in vehicle excludes entries")
+        void applyFilterWithCargoWidthExclusionTest() {
+            List<Offer> resList;
+            testOfferFilter.setMeasurementsMap(nonMockitoMockMap);
+            nonMockitoMockMap.replace("width", 20000.0);
+            resList = testOfferFilter.applyFilter();
+            Assertions.assertEquals(0, resList.size());
+        }
+
+        @Test
+        @DisplayName("filter for checking whether a given cargos width fits in vehicle filters correctly")
+        void applyFilterWithCargoWidthTest() {
+            double requiredSpace = 180.0;
+            double freeSpace;
+            List<Offer> resList;
+            testOfferFilter.setMeasurementsMap(nonMockitoMockMap);
+            nonMockitoMockMap.replace("width", requiredSpace);
+            resList = testOfferFilter.applyFilter();
+
+            for(Offer offer : resList) {
+                freeSpace = offer.getFreeSpace().orElseThrow(IllegalStateException::new).getWidth();
+                Assertions.assertTrue(requiredSpace <= freeSpace);
+            }
+        }
+
+        @Test
+        @DisplayName("filter for checking whether a given cargos depth fits in vehicle excludes entries")
+        void applyFilterWithCargoDepthExclusionTest() {
+            List<Offer> resList;
+            testOfferFilter.setMeasurementsMap(nonMockitoMockMap);
+            nonMockitoMockMap.replace("depth", 20000.0);
+            resList = testOfferFilter.applyFilter();
+            Assertions.assertEquals(0, resList.size());
+        }
+
+        @Test
+        @DisplayName("filter for checking whether a given cargos depth fits in vehicle filters correctly")
+        void applyFilterWithCargoDepthTest() {
+            double requiredSpace = 280.0;
+            double freeSpace;
+            List<Offer> resList;
+            testOfferFilter.setMeasurementsMap(nonMockitoMockMap);
+            nonMockitoMockMap.replace("depth", requiredSpace);
+            resList = testOfferFilter.applyFilter();
+
+            for(Offer offer : resList) {
+                freeSpace = offer.getFreeSpace().orElseThrow(IllegalStateException::new).getDepth();
+                Assertions.assertTrue(requiredSpace <= freeSpace);
+            }
+        }
+
+        @Test
+        @DisplayName("filter for checking whether a given cargos weight fits in vehicle excludes entries")
+        void applyFilterWithCargoWeightExclusionTest() {
+            List<Offer> resList;
+            testOfferFilter.setMeasurementsMap(nonMockitoMockMap);
+            nonMockitoMockMap.replace("weight", 20000.0);
+            resList = testOfferFilter.applyFilter();
+            Assertions.assertEquals(0, resList.size());
+        }
+
+        @Test
+        @DisplayName("filter for checking whether a given cargos weight fits in vehicle filters correctly")
+        void applyFilterWithCargoWeightTest() {
+            double requiredSpace = 280.0;
+            double freeSpace;
+            List<Offer> resList;
+            testOfferFilter.setMeasurementsMap(nonMockitoMockMap);
+            nonMockitoMockMap.replace("weight", requiredSpace);
+            resList = testOfferFilter.applyFilter();
+
+            for(Offer offer : resList) {
+                freeSpace = offer.getFreeSpace().orElseThrow(IllegalStateException::new).getWeight();
+                Assertions.assertTrue(requiredSpace <= freeSpace);
+            }
+        }
+        
     }
 }

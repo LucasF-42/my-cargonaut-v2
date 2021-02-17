@@ -36,38 +36,18 @@ public class OfferPool implements java.io.Serializable {
 
     public class OfferFilter {
 
-        public User user;
-        public String startLocName, destLocName;
-        public Location startLoc, destLoc;
-        public Date startD, endD;
-        public Measurements freeSpace;
+        private User user;
+        private String startLocName, destLocName;
+        private Location startLoc, destLoc;
+        private Date startD, endD;
+        private Measurements freeSpace;
         private Map<String, Double> measurements;
-        public Vehicle vehicle;
-        public long offerID;
+        private Vehicle vehicle;
+        private long offerID;
 
         private OfferFilter() {
             measurements = new HashMap<>();
             offerID = -1L;
-        }
-
-        public void setMeasurementsMap(Map<String, Double> measMap) {
-            this.measurements = measMap;
-        }
-
-        public Optional<Double> getHeight() {
-            return Optional.ofNullable(measurements.get("height"));
-        }
-
-        public Optional<Double> getWidth() {
-            return Optional.ofNullable(measurements.get("width"));
-        }
-
-        public Optional<Double> getDepth() {
-            return Optional.ofNullable(measurements.get("depth"));
-        }
-
-        public Optional<Double> getWeight() {
-            return Optional.ofNullable(measurements.get("weight"));
         }
 
         public List<Offer> applyFilter() {
@@ -114,14 +94,110 @@ public class OfferPool implements java.io.Serializable {
                         } else {
                             if(offer.getFreeSpace().isPresent()) {
                                 Measurements cargoHold = offer.getFreeSpace().get();
-                                if(filter.getHeight().isPresent() && cargoHold.getHeight() < cargoHold.getHeight()) return false;
-                                if(filter.getWidth().isPresent() && cargoHold.getWidth() < cargoHold.getWidth()) return false;
-                                if(filter.getDepth().isPresent() && cargoHold.getDepth() < cargoHold.getDepth()) return false;
-                                return filter.getWeight().isEmpty() || !(cargoHold.getWeight() < cargoHold.getWeight());
+                                if(filter.getHeight().isPresent() && cargoHold.getHeight() < filter.getHeight().get()) return false;
+                                if(filter.getWidth().isPresent() && cargoHold.getWidth() < filter.getWidth().get()) return false;
+                                if(filter.getDepth().isPresent() && cargoHold.getDepth() < filter.getDepth().get()) return false;
+                                return filter.getWeight().isEmpty() || !(cargoHold.getWeight() < filter.getWeight().get());
                             }
                         }
                         return true;
                     }).collect(Collectors.toCollection(LinkedList::new));
+        }
+
+        public void setMeasurementsMap(Map<String, Double> measMap) {
+            this.measurements = measMap;
+        }
+
+        public void setUser(User user) {
+            this.user = user;
+        }
+
+        public void setStartLocName(String name) {
+            this.startLocName = name;
+        }
+
+        public void setDestLocName(String name) {
+            this.destLocName = name;
+        }
+
+        public void setStartLoc(Location startLoc) {
+            this.startLoc = startLoc;
+        }
+
+        public void setDestLoc(Location destLoc) {
+            this.destLoc = destLoc;
+        }
+
+        public void setStartDate(Date startD) {
+            this.startD = startD;
+        }
+
+        public void setEndDate(Date endD) {
+            this.endD = endD;
+        }
+
+        public void setVehicle(Vehicle vehicle) {
+            this.vehicle = vehicle;
+        }
+
+        public void setOfferID(long offerID) {
+            this.offerID = offerID;
+        }
+
+        public void setFreeSpace(Measurements freeSpace) {
+            this.freeSpace = freeSpace;
+        }
+
+        public Optional<Double> getHeight() {
+            return Optional.ofNullable(measurements.get("height"));
+        }
+
+        public Optional<Double> getWidth() {
+            return Optional.ofNullable(measurements.get("width"));
+        }
+
+        public Optional<Double> getDepth() {
+            return Optional.ofNullable(measurements.get("depth"));
+        }
+
+        public Optional<Double> getWeight() {
+            return Optional.ofNullable(measurements.get("weight"));
+        }
+
+        public Optional<User> getUser() {
+            return Optional.ofNullable(user);
+        }
+
+        public Optional<Location> getStartLocation() {
+            return Optional.ofNullable(startLoc);
+        }
+
+        public Optional<Location> getDestLoc() {
+            return Optional.ofNullable(destLoc);
+        }
+
+        public Optional<String> getStartLocName() {
+            return Optional.ofNullable(startLocName);
+        }
+
+        public Optional<String> getDestLocName() {
+            return Optional.ofNullable(destLocName);
+        }
+
+        public Optional<Date> getStartDate() {
+            return Optional.ofNullable(startD);
+        }
+
+        public Optional<Date> getEndDate() {
+            return Optional.ofNullable(endD);
+        }
+
+        public Optional<Measurements> getFreeSpace() {
+            return Optional.ofNullable(freeSpace);
+        }
+
+        public Optional<Vehicle> getVehicle() {
+            return Optional.ofNullable(vehicle);
         }
     }
 }
