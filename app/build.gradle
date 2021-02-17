@@ -72,6 +72,10 @@ jar {
 
 test {
     useJUnitPlatform()
+    testLogging {
+        events "failed", "passed"
+        exceptionFormat "short"
+    }
 }
 
 java {
