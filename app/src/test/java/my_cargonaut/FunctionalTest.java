@@ -3,7 +3,13 @@ package my_cargonaut;
 import io.javalin.Javalin;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
+import my_cargonaut.registration.RegistrationPage;
+import my_cargonaut.utility.FormManUtils;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
+import java.util.logging.Handler;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 // See https://javalin.io/tutorials/testing
@@ -68,6 +74,36 @@ public class FunctionalTest {
         app.start(1117);
         HttpResponse<String> response = Unirest.get("http://localhost:1117/logout").asString();
         assertEquals(response.getStatus(),200);
+        app.stop();
+    }
+
+    @Test
+    public void POST_to_get_landing_page_ok(){
+        Javalin app = App.setUpCargonaut();
+        app.start(1118);
+        HttpResponse<String> response = Unirest.post("http://localhost:1118").asString();
+        assertEquals(response.getStatus(),200);
+        app.stop();
+    }
+
+    /* Not really possible due to us relying on UI/HTML stuff we can't really access.
+    @Test
+    public void POST_register_ok(){
+        Javalin app = App.setUpCargonaut();
+        app.start(1119);
+        HttpResponse<String> response = Unirest.post("http://localhost:1119/register").asString();
+        assertEquals(response.getStatus(),200);
+        app.stop();
+    }
+    */
+
+
+    @Test
+    public void POST_register_no_password(){
+        Javalin app = App.setUpCargonaut();
+        app.start(1119);
+        HttpResponse<String> response = Unirest.post("http://localhost:1119/register").asString();
+        assertEquals(response.getStatus(),500); //TODO this should actually be a 4xx status, not 5xx
         app.stop();
     }
 
