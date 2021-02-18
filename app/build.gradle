@@ -22,10 +22,10 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.0-M1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0-M1'
 
-    //Mockito
+    // Mockito
     testImplementation 'org.mockito:mockito-core:3.7.7'
 
-    // This dependency is used by the application.
+    // Guava
     implementation 'com.google.guava:guava:29.0-jre'
 
     // Javalin
@@ -39,6 +39,13 @@ dependencies {
 
     // Unirest
     implementation 'com.konghq:unirest-java:3.4.00'
+
+    // Selenium
+    implementation 'org.seleniumhq.selenium:selenium-chrome-driver:3.141.59'
+
+    //WebDriverManager
+    implementation 'io.github.bonigarcia:webdrivermanager:3.6.2'
+
 }
 
 application {
