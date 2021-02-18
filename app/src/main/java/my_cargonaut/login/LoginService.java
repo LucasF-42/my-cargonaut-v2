@@ -15,7 +15,7 @@ public class LoginService {
         userRegister = UserRegister.getInstance();
     }
 
-    public boolean authenticate(String username, String password) throws IllegalArgumentException {
+    public Optional<User> authenticate(String username, String password) throws IllegalArgumentException {
         Optional<User> maybeUser;
         User user;
         if(username == null && password == null) {
@@ -30,7 +30,7 @@ public class LoginService {
             throw new IllegalArgumentException("Der Nutzer " + username + " existiert nicht");
         }
         user = maybeUser.get();
-        return password.equals(user.getPassword().getPw());
+        return password.equals(user.getPassword().getPw()) ? Optional.of(user) : Optional.empty();
     }
 
     public static LoginService getInstance() {

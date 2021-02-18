@@ -82,7 +82,7 @@ public class LoginServiceTest {
     void authentificationFailsIfPasswordIsWrong() {
         String enteredPassword = "wrongPassword";
 
-        Assertions.assertFalse(loginService.authenticate(this.testUsername, enteredPassword));
+        Assertions.assertTrue(loginService.authenticate(this.testUsername, enteredPassword).isEmpty());
     }
 
     @Test
@@ -90,7 +90,7 @@ public class LoginServiceTest {
     void authentificationSucceedsIfPasswordIsRight() {
         String enteredPassword = "rightPassword";
 
-        Assertions.assertTrue(loginService.authenticate(this.testUsername, enteredPassword));
+        Assertions.assertTrue(loginService.authenticate(this.testUsername, enteredPassword).isPresent());
     }
 
 }
