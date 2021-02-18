@@ -39,9 +39,8 @@ When the project has been build, you are able to simply run MyCargonaut on your 
 
 ![Gradle run](https://imgur.com/OrRCK2Z.png)
 
-You can then open MyCargonaut from any client machine. On default the address for that would be `http://localhost:7777/`,
-but this can be changed in `./src/main/java/my_cargonaut/App.java` in line `86`, simply by changing the value of 
-`app.start(7777);`.
+You can then open MyCargonaut from any client machine. On default the address for that would be `http://localhost:7777/`.
+
 
 
 ## Proof of concept
@@ -50,7 +49,7 @@ We have managed to port a version of MyCargonaut to
 [Heroku](https://kms-mycargonaut.herokuapp.com/), but do the `JTE` limitations, we were forced to abandon some features,
 like persistency.
 
-The branch can be found [here](https://github.com/LucasF-42/my-cargonaut-v2/tree/herokuDeploy). This fork is only used as a proof of concept
+The branch can be found [here](https://github.com/LucasF-42/my-cargonaut-v2/tree/herokuDeploy). This branch is only used as a proof of concept
 and may not work as well as the master or development version.
 
 ## Contributing
