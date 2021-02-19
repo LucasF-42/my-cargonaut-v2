@@ -1,5 +1,5 @@
 ![Cargonaut Logo](./mockups/img/logo.png)
-# MyCargonaut
+# MyCargonaut [![Build Status](https://travis-ci.com/LucasF-42/my-cargonaut-v2.svg?branch=master)](https://travis-ci.com/LucasF-42/my-cargonaut-v2)
 MyCargonaut is the community driven web app solution for private cargo delivering. It is a user-to-user based arangement service and works akin to an old-school black board.
 
 In short, MyCargonaut aims to be a platform where users can offer to transport other user's cargo from point A to point B. Any monetary transactions, as well as 
