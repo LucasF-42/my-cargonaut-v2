@@ -35,6 +35,7 @@ public class OfferCreationService {
         offerPool.addOffer(offer);
     }
 
+
     public static OfferCreationService getInstance() {
         if(OfferCreationService.instance == null) {
             OfferCreationService.instance = new OfferCreationService();
