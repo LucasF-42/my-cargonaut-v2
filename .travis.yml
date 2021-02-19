@@ -2,7 +2,8 @@ language: java
 jdk: openjdk15
 
 dist: xenial
-services: xvfb
+services:
+  - xvfb
 
 addons:
   sonarcloud:
@@ -26,6 +27,4 @@ install:
 script:
   - ./gradlew check
   - ./gradlew sonarqube
-  - ./xvfb-run make test
-
 
