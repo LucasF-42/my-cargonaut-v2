@@ -10,6 +10,7 @@ import my_cargonaut.utility.SessionManUtils;
 import my_cargonaut.utility.data_classes.user.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 import static my_cargonaut.utility.SessionManUtils.sessionAttributeLoggedInUsername;
 
@@ -17,6 +18,7 @@ public class LoginController {
 
     private static final LoginService loginService = LoginService.getInstance();
 
+    // should return 302 as status code (sometimes 304 though)
     public static Handler handleLogout = ctx -> {
         //ctx.sessionAttribute(sessionAttributeLoggedInUsername, null);
         SessionManUtils.removeSessionAttribute(ctx, sessionAttributeLoggedInUsername);
@@ -34,10 +36,11 @@ public class LoginController {
             username = map.get(FormManUtils.loginFormName);
             password = map.get(FormManUtils.loginFormPassword);
             try {
-                if (!loginService.authenticate(username, password)) {
+                Optional<User> maybeUser = loginService.authenticate(username, password);
+                if (maybeUser.isEmpty()) {
                     return page.markAuthentificationFailure("Falsches Passwort");
                 } else {
-                    User user = UserRegister.getInstance().getUser(username).get();
+                    User user = maybeUser.get();
                     //ctx.sessionAttribute(sessionAttributeLoggedInUsername, username);
                     SessionManUtils.addSessionAttribute(ctx, sessionAttributeLoggedInUsername, username);
                     return page.markAuthentificationSuccess(user);

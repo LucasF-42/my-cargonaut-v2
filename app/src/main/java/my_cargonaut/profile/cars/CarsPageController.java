@@ -17,6 +17,10 @@ public class CarsPageController {
 
     public static Handler serveCarsPage = ctx -> {
         CarsPage page = new CarsPage(ctx);
+        if(!page.hasAccess()) {
+            page.render();
+            return;
+        }
         // is fine as we should only be able to access this page while logged in (as in: there's a User in the Optional)
         User user = SessionManUtils.getUserInSession(ctx).get();
         page.setVehicle(user.getVehicle());

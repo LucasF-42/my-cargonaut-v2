@@ -35,7 +35,7 @@ public class OffersSearchService {
     }
 
     private List<Offer> queryOffers(OfferPool.OfferFilter filter) {
-        return offerPool.filterOffers(filter);
+        return filter.applyFilter();
     }
 
     public Optional<Date> getMaybeDateFromString(String dateString) throws ParseException {
@@ -68,30 +68,31 @@ public class OffersSearchService {
 
         public List<Offer> queryOffersWithFilter() {
             if(this.cargoMeasurements.size() == 4) {
-                this.offerFilter.freeSpace = new Measurements(cargoMeasurements.get("height"),
-                        cargoMeasurements.get("width"), cargoMeasurements.get("depth"), cargoMeasurements.get("weight"));
+                this.offerFilter.setFreeSpace(new Measurements(cargoMeasurements.get("height"),
+                        cargoMeasurements.get("width"), cargoMeasurements.get("depth"),
+                        cargoMeasurements.get("weight")));
             }
             return queryOffers(this.offerFilter);
         }
 
         public OfferFilterConfigurator setStartLocationName(String startLocName) {
-            this.offerFilter.startLocName = startLocName;
+            this.offerFilter.setStartLocName(startLocName);
             return this;
         }
 
         public OfferFilterConfigurator setDestinationName(String destName) {
             // If we were to use an Geocoding-API: Build a location-object from this String!
-            this.offerFilter.destLocName = destName;
+            this.offerFilter.setDestLocName(destName);
             return this;
         }
 
         public OfferFilterConfigurator setStartDate(Date startDate) {
-            this.offerFilter.startD = startDate;
+            this.offerFilter.setStartDate(startDate);
             return this;
         }
 
         public OfferFilterConfigurator setEndDate(Date endDate) {
-            this.offerFilter.endD = endDate;
+            this.offerFilter.setEndDate(endDate);
             return this;
         }
 
@@ -116,22 +117,22 @@ public class OffersSearchService {
         }
 
         public OfferFilterConfigurator setUser(String username) throws IllegalStateException {
-            this.offerFilter.user = userRegister.getUser(username).orElseThrow(IllegalAccessError::new);
+            this.offerFilter.setUser(userRegister.getUser(username).orElseThrow(IllegalAccessError::new));
             return this;
         }
 
         public OfferFilterConfigurator setUser(User user){
-            this.offerFilter.user = user;
+            this.offerFilter.setUser(user);
             return this;
         }
 
         public OfferFilterConfigurator setVehicle(Vehicle vic) {
-            this.offerFilter.vehicle = vic;
+            this.offerFilter.setVehicle(vic);
             return this;
         }
 
         public OfferFilterConfigurator setOfferId(long id) {
-            this.offerFilter.offerID = id;
+            this.offerFilter.setOfferID(id);
             return this;
         }
     }

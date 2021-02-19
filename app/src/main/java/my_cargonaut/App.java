@@ -41,6 +41,11 @@ public class App {
 
     public static void main(String[] args) {
 
+        Javalin app = setUpCargonaut();
+        app.start(getHerokuAssignedPort());
+    }
+
+    static Javalin setUpCargonaut() {
         Javalin app = Javalin.create(App::configure);
         app.events(event -> {
             // TODO: Save the registered Users in the file/database?
@@ -83,7 +88,8 @@ public class App {
 
             app.error(404, LandingController.serveNotFoundPage);
         });
-        app.start(getHerokuAssignedPort());
+
+        return app;
     }
 
     private static void configure(JavalinConfig config) {

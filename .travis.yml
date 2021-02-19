@@ -1,13 +1,30 @@
 language: java
 jdk: openjdk15
 
+dist: xenial
+services:
+  - xvfb
+
 addons:
   sonarcloud:
     organization: "kms-team6"
     token: 
       $SONAR_TOKEN
+  chrome: stable
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+
+install:
+  ./gradlew assemble
 
 script:
+  - ./gradlew check
   - ./gradlew sonarqube
-
 

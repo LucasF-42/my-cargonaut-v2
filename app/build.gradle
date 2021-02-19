@@ -19,19 +19,34 @@ repositories {
 
 dependencies {
     // Use JUnit test framework.
-    testImplementation 'junit:junit:4.13'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.0-M1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0-M1'
+    testImplementation 'org.hamcrest:hamcrest-library:2.1'
 
-    // This dependency is used by the application.
-    compile 'com.google.guava:guava:29.0-jre'
+    // Mockito
+    testImplementation 'org.mockito:mockito-core:3.7.7'
+
+    // Guava
+    implementation 'com.google.guava:guava:29.0-jre'
 
     // Javalin
-    compile 'io.javalin:javalin:3.12.0'
+    implementation 'io.javalin:javalin:3.12.0'
 
     //jte
-    compile 'gg.jte:jte:1.5.0'
+    implementation 'gg.jte:jte:1.5.0'
 
     // Java Logger
-    compile "org.slf4j:slf4j-simple:1.7.30"
+    implementation 'org.slf4j:slf4j-simple:1.7.30'
+
+    // Unirest
+    implementation 'com.konghq:unirest-java:3.4.00'
+
+    // Selenium
+    implementation 'org.seleniumhq.selenium:selenium-chrome-driver:3.141.59'
+
+    //WebDriverManager
+    implementation 'io.github.bonigarcia:webdrivermanager:3.6.2'
+
 }
 
 application {
@@ -39,20 +54,9 @@ application {
     mainClass = 'my_cargonaut.App'
 }
 
-sonarqube {
-  properties {
-    property "sonar.projectKey", "LucasF-42_my-cargonaut-v2"
-  }
+task stage(dependsOn: ['build', 'clean']) {
+    build.mustRunAfter clean
 }
-
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(15))
-    }
-}
-
-task stage(dependsOn: ['build', 'clean'])
-build.mustRunAfter clean
 
 task copyToLib(type: Copy) {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
@@ -60,14 +64,34 @@ task copyToLib(type: Copy) {
     from(configurations.compile)
 }
 
+stage.dependsOn(copyToLib)
+
+sonarqube {
+  properties {
+    property "sonar.projectKey", "LucasF-42_my-cargonaut-v2"
+  }
+}
+
 jar {
     manifest {
         attributes 'Main-Class': 'my_cargonaut.App'
     }
-    baseName = 'MyCargonaut'
+    archiveBaseName = 'MyCargonaut'
     from {
         configurations.compile.collect {it.isDirectory() ? it: zipTree(it)}
     }
 }
 
-stage.dependsOn(copyToLib)
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "failed", "passed"
+        exceptionFormat "short"
+    }
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(15))
+    }
+}

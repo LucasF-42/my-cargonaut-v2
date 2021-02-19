@@ -20,6 +20,10 @@ public class DealsPageController {
         OffersSearchService oss = OffersSearchService.getInstance();
 
         page = new DealsPage(ctx);
+        if(!page.hasAccess()) {
+            page.render();
+            return;
+        }
 
         List<Offer> offersOfUser = oss.getOfferFilterConfigurator()
                 .setUser(page.getCurrentUser().orElseThrow(IllegalStateException::new))
