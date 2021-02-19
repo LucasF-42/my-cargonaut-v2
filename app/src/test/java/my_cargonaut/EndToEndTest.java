@@ -69,7 +69,7 @@ public class EndToEndTest {
         assertEquals("testpw", driver.findElement(By.id("registerPw2")).getAttribute("value"));
         Actions act = new Actions(driver);
         act.moveToElement(driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div/form/div/div[4]/button"))).click().perform();
-        Thread.sleep(500);
+        Thread.sleep(2000);
         assertTrue(trueRegister.getUser("test").isPresent());
         Thread.sleep(500);
         trueRegister.deleteUser("test");
@@ -156,7 +156,7 @@ public class EndToEndTest {
         driver.findElement(By.xpath("//*[@id=\"offerCreateDescription\"]")).sendKeys("A description.");
         act.moveToElement(driver.findElement(By.name("apply"))).click().perform();
         //driver.findElement(By.name("apply")).click();
-        Thread.sleep(500);
+        Thread.sleep(2000);
         assertEquals("Ihr Angebot wurde erstellt!",
                 driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div[1]/div/strong")).getText());
         act.moveToElement( driver.findElement(By.xpath("/html/body/div[1]/div/div/nav/a"))).click().perform();
