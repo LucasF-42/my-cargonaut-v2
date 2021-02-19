@@ -29,6 +29,15 @@ public class OfferPool implements java.io.Serializable {
         return this.offerList.add(offer);
     }
 
+    public void purgePool(String pw) throws IllegalAccessError{
+        if(pw.equals("rosebuds")){
+            this.offerList.clear();
+        }else{
+            throw new IllegalAccessError();
+        }
+
+    }
+
     public OfferFilter getOfferFilter() {
         return new OfferFilter();
     }
