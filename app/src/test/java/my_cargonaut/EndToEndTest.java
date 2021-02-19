@@ -1,5 +1,6 @@
 package my_cargonaut;
 
+
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.javalin.Javalin;
 import my_cargonaut.login.LoginService;
@@ -17,6 +18,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -50,19 +52,20 @@ public class EndToEndTest {
         String username = "test";
         String password = "testpw";
         WebDriverManager.chromedriver().setup();
-        WebDriver driver = new ChromeDriver();
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("start-maximized");
+        WebDriver driver = new ChromeDriver(options);
         driver.get("http://localhost:1234");
         driver.findElement(By.linkText("Registrieren")).click();
         Thread.sleep(500);
-        //driver.findElement(By.id("registerName")).click();
         driver.findElement(By.id("registerName")).sendKeys("test");
         assertEquals("test", driver.findElement(By.id("registerName")).getAttribute("value"));
-        //driver.findElement(By.id("registerPw")).click();
         driver.findElement(By.id("registerPw")).sendKeys("testpw");
         assertEquals("testpw", driver.findElement(By.id("registerPw")).getAttribute("value"));
         //driver.findElement(By.id("registerPw2")).click();
         driver.findElement(By.id("registerPw2")).sendKeys("testpw");
         assertEquals("testpw", driver.findElement(By.id("registerPw2")).getAttribute("value"));
+        Thread.sleep(500);
         driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div/form/div/div[4]/button")).click();
         Thread.sleep(500);
         assertTrue(trueRegister.getUser("test").isPresent());
@@ -131,7 +134,9 @@ public class EndToEndTest {
     public void Offer() throws InterruptedException{
         Date randDate = new Date(System.currentTimeMillis());
         WebDriverManager.chromedriver().setup();
-        WebDriver driver = new ChromeDriver();
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("start-maximized");
+        WebDriver driver = new ChromeDriver(options);
         login(driver);
         driver.findElement(By.xpath("/html/body/div[1]/div/div/nav/div/ul[1]/li/a")).click();
         Thread.sleep(500);
@@ -146,6 +151,7 @@ public class EndToEndTest {
         driver.findElement(By.xpath("//*[@id=\"offerCreateDepth\"]")).sendKeys("15");
         driver.findElement(By.xpath("//*[@id=\"offerCreateWeight\"]")).sendKeys("45");
         driver.findElement(By.xpath("//*[@id=\"offerCreateDescription\"]")).sendKeys("A description.");
+        Thread.sleep(500);
         driver.findElement(By.name("apply")).click();
         Thread.sleep(500);
         assertEquals("Ihr Angebot wurde erstellt!",
