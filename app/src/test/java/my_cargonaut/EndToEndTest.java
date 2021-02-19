@@ -8,6 +8,7 @@ import my_cargonaut.utility.data_classes.Tour;
 import my_cargonaut.utility.data_classes.offers.OfferPool;
 import my_cargonaut.utility.data_classes.user.User;
 import my_cargonaut.utility.data_classes.user.UserRegister;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.interactions.Actions;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -65,8 +67,8 @@ public class EndToEndTest {
         //driver.findElement(By.id("registerPw2")).click();
         driver.findElement(By.id("registerPw2")).sendKeys("testpw");
         assertEquals("testpw", driver.findElement(By.id("registerPw2")).getAttribute("value"));
-        Thread.sleep(500);
-        driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div/form/div/div[4]/button")).click();
+        Actions act = new Actions(driver);
+        act.moveToElement(driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div/form/div/div[4]/button"))).click().perform();
         Thread.sleep(500);
         assertTrue(trueRegister.getUser("test").isPresent());
         Thread.sleep(500);
@@ -137,6 +139,7 @@ public class EndToEndTest {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized");
         WebDriver driver = new ChromeDriver(options);
+        Actions act = new Actions(driver);
         login(driver);
         driver.findElement(By.xpath("/html/body/div[1]/div/div/nav/div/ul[1]/li/a")).click();
         Thread.sleep(500);
@@ -151,16 +154,18 @@ public class EndToEndTest {
         driver.findElement(By.xpath("//*[@id=\"offerCreateDepth\"]")).sendKeys("15");
         driver.findElement(By.xpath("//*[@id=\"offerCreateWeight\"]")).sendKeys("45");
         driver.findElement(By.xpath("//*[@id=\"offerCreateDescription\"]")).sendKeys("A description.");
-        Thread.sleep(500);
-        driver.findElement(By.name("apply")).click();
+        act.moveToElement(driver.findElement(By.name("apply"))).click().perform();
+        //driver.findElement(By.name("apply")).click();
         Thread.sleep(500);
         assertEquals("Ihr Angebot wurde erstellt!",
                 driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div[1]/div/strong")).getText());
-        driver.findElement(By.xpath("/html/body/div[1]/div/div/nav/a")).click();
+        act.moveToElement( driver.findElement(By.xpath("/html/body/div[1]/div/div/nav/a"))).click().perform();
+        //driver.findElement(By.xpath("/html/body/div[1]/div/div/nav/a")).click();
         Thread.sleep(500);
         driver.findElement(By.xpath("//*[@id=\"offerSearchFormOrigin\"]")).sendKeys("Test 1");
         driver.findElement(By.xpath("//*[@id=\"offerSearchFormDestination\"]")).sendKeys("Test 2");
-        driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div/div/div/div/nav/form/div[6]/button")).click();
+        act.moveToElement( driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div/div/div/div/nav/form/div[6]/button"))).click().perform();
+        //driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div/div/div/div/nav/form/div[6]/button")).click();
         assertEquals("Test 1",
                 driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div[2]/table/tbody/tr/td[2]")).getText());
         assertEquals("Test 2",
